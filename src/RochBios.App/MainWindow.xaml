@@ -35,11 +35,12 @@
      <Border Grid.Row="1" Style="{StaticResource Card}" Margin="0,0,0,10" Padding="14,11">
       <Grid>
        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
-       <Grid.ColumnDefinitions><ColumnDefinition Width="140"/><ColumnDefinition Width="12"/><ColumnDefinition/><ColumnDefinition Width="12"/><ColumnDefinition Width="185"/></Grid.ColumnDefinitions>
+       <Grid.ColumnDefinitions><ColumnDefinition Width="110"/><ColumnDefinition Width="12"/><ColumnDefinition Width="190"/><ColumnDefinition Width="12"/><ColumnDefinition/><ColumnDefinition Width="12"/><ColumnDefinition Width="165"/></Grid.ColumnDefinitions>
        <StackPanel><TextBlock Text="Manufacturer" Style="{StaticResource Label}"/><ComboBox x:Name="VendorBox" SelectionChanged="Vendor_Changed" AutomationProperties.Name="Target manufacturer"/></StackPanel>
-       <StackPanel Grid.Column="2"><TextBlock Text="Target motherboard / hardware revision" Style="{StaticResource Label}"/><TextBox x:Name="BoardBox" MinHeight="34" TextChanged="Profile_Changed" AutomationProperties.Name="Target motherboard model and revision"/></StackPanel>
-       <StackPanel Grid.Column="4"><TextBlock Text="USB root filename" Style="{StaticResource Label}"/><TextBox x:Name="FlashNameBox" MinHeight="34" TextChanged="Profile_Changed" AutomationProperties.Name="FlashBack BIOS filename" FontFamily="Consolas"/></StackPanel>
-       <TextBlock Grid.Row="1" Grid.ColumnSpan="5" Text="Check model and filename against the board manual. ASUS filenames are model-specific." Style="{StaticResource Muted}" FontSize="11" Margin="0,7,0,0"/>
+       <StackPanel Grid.Column="2"><TextBlock Text="Flash method" Style="{StaticResource Label}"/><ComboBox x:Name="MethodBox" SelectionChanged="Method_Changed" AutomationProperties.Name="Flash method" FontSize="12"/></StackPanel>
+       <StackPanel Grid.Column="4"><TextBlock Text="Target motherboard / revision" Style="{StaticResource Label}"/><TextBox x:Name="BoardBox" MinHeight="34" TextChanged="Profile_Changed" AutomationProperties.Name="Target motherboard model and revision"/></StackPanel>
+       <StackPanel Grid.Column="6"><TextBlock Text="USB root filename" Style="{StaticResource Label}"/><TextBox x:Name="FlashNameBox" MinHeight="34" TextChanged="Profile_Changed" AutomationProperties.Name="BIOS filename for selected flash method" FontFamily="Consolas"/></StackPanel>
+       <TextBlock x:Name="ProfileHint" Grid.Row="1" Grid.ColumnSpan="7" Text="Check model, flash method and filename against the board manual." Style="{StaticResource Muted}" FontSize="11" Margin="0,7,0,0"/>
       </Grid>
      </Border>
      <Border Grid.Row="2" Style="{StaticResource Card}" Padding="14,11">
@@ -73,7 +74,7 @@
      <Border Style="{StaticResource Card}">
       <Grid>
        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
-       <TextBlock Text="Prepare a FlashBack drive" FontSize="21" FontWeight="SemiBold"/>
+       <TextBlock Text="Prepare a BIOS USB drive" FontSize="21" FontWeight="SemiBold"/>
        <WrapPanel Grid.Row="1" Margin="0,16,0,12"><Button x:Name="RefreshUsbButton" Content="Refresh USB drives" Click="RefreshUsb_Click"/><Button x:Name="LoadPackageButton" Content="Open package…" Click="LoadPackage_Click"/></WrapPanel>
        <StackPanel Grid.Row="2"><TextBlock Text="USB destination" Style="{StaticResource Label}"/><ComboBox x:Name="Drives" DisplayMemberPath="Display" SelectionChanged="Drive_Changed" AutomationProperties.Name="USB destination"/><TextBlock x:Name="DriveStatus" Text="Existing FAT32 / MBR USB drive with one partition." Foreground="{DynamicResource Warning}" FontSize="12" Margin="0,8,0,16"/></StackPanel>
        <StackPanel Grid.Row="3"><RadioButton x:Name="ModifiedChoice" Content="Modified BIOS with the selected microcode" IsChecked="True"/><RadioButton x:Name="RecoveryChoice" Content="Untouched new BIOS for recovery"/></StackPanel>
@@ -83,7 +84,7 @@
      </Border>
      <Grid Grid.Column="2"><Grid.RowDefinitions><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
       <Border Style="{StaticResource Card}" Margin="0,0,0,12"><StackPanel><TextBlock Text="Selected package" Style="{StaticResource Heading}"/><TextBlock x:Name="PackageText" Text="Build and verify a package, or open an existing version 2 package." Style="{StaticResource Muted}" FontSize="12" Margin="0,10,0,0" ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"/></StackPanel></Border>
-      <Border Grid.Row="1" Style="{StaticResource Card}"><StackPanel><TextBlock Text="At the motherboard" Style="{StaticResource Heading}"/><TextBlock Text="Confirm FlashBack support, filename, USB port and power connections in the board manual. Keep a separate recovery drive. Do not interrupt power while flashing." Margin="0,8,0,10" FontSize="12"/><Button Content="Board vendor guide ↗" Click="Guide_Click" HorizontalAlignment="Left"/><TextBlock Text="The app does not format the drive or flash the motherboard." Style="{StaticResource Muted}" FontSize="11" Margin="0,10,0,0"/></StackPanel></Border>
+      <Border Grid.Row="1" Style="{StaticResource Card}"><StackPanel><TextBlock Text="At the motherboard" Style="{StaticResource Heading}"/><TextBlock x:Name="BoardGuideText" Text="Confirm the selected flash method and filename in the board manual. Keep a separate recovery drive." Margin="0,8,0,10" FontSize="12"/><Button Content="Board vendor guide ↗" Click="Guide_Click" HorizontalAlignment="Left"/><TextBlock Text="The app does not format the drive or flash the motherboard." Style="{StaticResource Muted}" FontSize="11" Margin="0,10,0,0"/></StackPanel></Border>
      </Grid>
     </Grid>
    </TabItem>

@@ -2,6 +2,8 @@
 
 ## 1.0.0 — Roch Microcode
 
+- MSI now defaults to M-FLASH with the original new BIOS filename; the separate Flash BIOS Button option uses MSI.ROM. Package instructions and USB preparation follow the chosen method. Existing packages retain their original method.
+
 - Added clickable YouTube, X and Discord links below the app status line, visible on every tab in both themes.
 
 - Licensed GPL-3.0-or-later, with the license and corresponding source supplied alongside the Windows release.

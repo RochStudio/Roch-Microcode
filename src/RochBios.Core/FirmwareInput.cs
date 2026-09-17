@@ -46,38 +46,55 @@ public sealed record FirmwareInput(string FileName, byte[] Bytes, FirmwareInfo I
 
 public sealed record FlashProfile(string Vendor, string Board, string FileName)
 {
+    public const string FlashBack = "FlashBack / BIOS button";
+    public const string MFlash = "M-FLASH (inside BIOS)";
+    // Missing fields in existing version 2 packages retain the original button workflow.
+    public string Method { get; init; } = FlashBack;
+    public string? OriginalFileName { get; init; }
+    public static string[] Methods(string vendor) => vendor == "MSI" ? [MFlash, FlashBack] : [FlashBack];
+    public static string SuggestedName(string vendor, string method, string? originalName, string? asusName = null) =>
+        method == MFlash ? originalName ?? "" : vendor == "ASUS" ? asusName ?? "" : DefaultName(vendor);
     public static readonly string[] Vendors = ["ASUS", "MSI", "ASRock", "Gigabyte"];
     public static string DefaultName(string vendor) => vendor switch { "MSI" => "MSI.ROM", "ASRock" => "CREATIVE.ROM", "Gigabyte" => "GIGABYTE.bin", _ => "" };
     public void Validate()
     {
         Transfer.Require(Vendors.Contains(Vendor), "Choose ASUS, MSI, ASRock or Gigabyte.");
+        Transfer.Require(Methods(Vendor).Contains(Method), "Choose a supported flash method for this manufacturer.");
         Transfer.Require(!string.IsNullOrWhiteSpace(Board) && Board.Length <= 120 && !Board.Any(char.IsControl), "Enter the target motherboard model and revision.");
         Transfer.Require(Regex.IsMatch(FileName, @"^[A-Za-z0-9_-]{1,24}\.[A-Za-z0-9]{1,4}$") && !Regex.IsMatch(Path.GetFileNameWithoutExtension(FileName), @"^(CON|PRN|AUX|NUL|COM[1-9]|LPT[1-9])$", RegexOptions.IgnoreCase), "Enter a valid root BIOS filename, without folders.");
-        if (Vendor == "ASUS") Transfer.Require(FileName.EndsWith(".CAP", StringComparison.OrdinalIgnoreCase), "ASUS FlashBack requires the model-specific .CAP name.");
+        if (Method == MFlash)
+        {
+            Transfer.Require(Regex.IsMatch(FileName, @"^E[0-9A-Z]{4}[IA]MS\.[0-9A-Z]{3}$", RegexOptions.IgnoreCase), "M-FLASH needs the original MSI BIOS filename. Load the original vendor BIOS or ZIP, not a renamed MSI.ROM.");
+            Transfer.Require(FileName.Equals(OriginalFileName, StringComparison.OrdinalIgnoreCase), "M-FLASH must preserve the NEW target BIOS filename, including its version extension.");
+        }
+        else if (Vendor == "ASUS") Transfer.Require(FileName.EndsWith(".CAP", StringComparison.OrdinalIgnoreCase), "ASUS FlashBack requires the model-specific .CAP name.");
         else Transfer.Require(FileName.Equals(DefaultName(Vendor), StringComparison.OrdinalIgnoreCase), "The filename does not match this vendor's FlashBack naming rule.");
     }
     public string GuideUrl => Vendor switch
     {
-        "MSI" => "https://www.msi.com/support/technical_details/MB_Flash_BIOS_Button",
+        "MSI" => Method == MFlash ? "https://www.msi.com/support/technical_details/mb_bios_update" : "https://www.msi.com/support/technical_details/MB_Flash_BIOS_Button",
         "ASRock" => "https://www.asrock.com/microsite/BIOSFlashback2026/",
         "Gigabyte" => "https://www.gigabyte.com/FileUpload/Global/KeyFeature/3798/index.html",
         _ => "https://www.asus.com/us/support/faq/1038568/"
     };
+    public string BoardInstructions => Method == MFlash
+        ? "Use M-FLASH inside the BIOS with the original target filename. A visible file does not prove acceptance; M-FLASH may reject modified firmware. Keep the untouched BIOS separately. Do not interrupt power while flashing."
+        : "Confirm FlashBack support, filename, USB port and power connections in the board manual. Keep a separate recovery drive. Do not interrupt power while flashing.";
     public string Instructions => $"""
         ROCH MICROCODE — {Vendor} {Board}
+        Flash method: {Method}
         USB root filename: {FileName}
         Modified and recovery files use the same name. Keep them on separate labelled drives.
 
         1. Confirm the NEW BIOS belongs to the exact target motherboard and hardware revision.
            The donor may be from another board; it contributes only its compatible Intel microcode.
            Modified and recovery outputs both use the target board's newer firmware as their base.
-        2. Your model must have a dedicated BIOS FlashBack / Flash BIOS Button / Q-Flash Plus feature.
-           A vendor name alone does not establish that the feature exists or accepts modified firmware.
+        2. {(Method == MFlash ? "Use M-FLASH inside the MSI BIOS. Preserve the original target BIOS filename; MSI.ROM is for the Flash BIOS Button." : "Your model must have a dedicated BIOS FlashBack / Flash BIOS Button / Q-Flash Plus feature. Confirm support in its manual.")}
         3. Use a FAT32 / MBR USB drive with one partition. Roch Microcode never formats it.
         4. Copy the chosen {FileName} to the USB root. Keep the untouched new BIOS on a recovery drive.
         5. Save settings; have the BitLocker recovery key and suspend protection if enabled.
-        6. Follow the EXACT board manual for power connectors, dedicated USB port, button and LED behavior.
-           Usually the PC is off with PSU power connected. Do not interrupt power during flashing.
+        6. {(Method == MFlash ? "Enter BIOS, open M-FLASH, and select the BIOS file on the USB drive. If rejected, stop; renaming cannot bypass signature checks." : "Follow the EXACT board manual for power connectors, dedicated USB port, button and LED behavior. Usually the PC is off with PSU power connected.")}
+           Do not interrupt power during flashing.
         7. After boot, confirm BIOS version and active microcode, then check stability before tuning.
            Resume BitLocker protection when complete.
 

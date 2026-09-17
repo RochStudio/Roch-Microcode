@@ -43,7 +43,7 @@ public partial class MainWindow : Window
         if (BuildButton is null) return;
         foreach (var b in new[] { OldButton, NewButton, KnownButton, InspectButton, RefreshUsbButton, LoadPackageButton }) b.IsEnabled = !busy;
         OldDrop.AllowDrop = NewDrop.AllowDrop = !busy;
-        OldCodes.IsEnabled = NewCodes.IsEnabled = VendorBox.IsEnabled = BoardBox.IsEnabled = FlashNameBox.IsEnabled = !busy;
+        OldCodes.IsEnabled = NewCodes.IsEnabled = VendorBox.IsEnabled = MethodBox.IsEnabled = BoardBox.IsEnabled = FlashNameBox.IsEnabled = !busy;
         BuildButton.IsEnabled = !busy && OldCodes.SelectedItem is Microcode d && NewCodes.SelectedItem is Microcode t && Transfer.CanReplace(d, t) && d.Revision != t.Revision && d.Size <= t.Size;
         OpenPackageButton.IsEnabled = GoUsbButton.IsEnabled = !busy && package is not null;
         Drives.IsEnabled = ModifiedChoice.IsEnabled = RecoveryChoice.IsEnabled = !busy;
@@ -66,6 +66,7 @@ public partial class MainWindow : Window
         Checks.ItemsSource = null; OutputHash.Text = ""; VerificationTitle.Text = "Verification results will appear here";
         VerificationDetail.Text = "The current selection needs a new build and verification.";
         PackageText.Text = "Build and verify the current selection, or open an existing version 2 package.";
+        BoardGuideText.Text = "Confirm the selected flash method and filename in the board manual. Keep a separate recovery drive.";
         UsbResult.Text = ""; RefreshControls();
     }
     string? PickImage(string title)
@@ -96,7 +97,7 @@ public partial class MainWindow : Window
             NewDetail.Text = $"{input.Bytes.Length / 1048576.0:0.##} MB • {input.Info.Microcodes.Count} microcodes found";
             VendorBox.SelectedItem = input.SuggestedVendor;
             BoardBox.Text = input.Info.IsSupportedBase ? Recipe.Board : Path.GetFileNameWithoutExtension(input.FileName).Replace('_', ' ');
-            FlashNameBox.Text = input.SuggestedVendor == "ASUS" ? input.SuggestedAsusName ?? "" : FlashProfile.DefaultName(input.SuggestedVendor);
+            SetMethods(input.SuggestedVendor);
         }
         updating = false; Invalidate(); UpdateTargets(); ShowInspection(input.Info);
     }
@@ -133,10 +134,32 @@ public partial class MainWindow : Window
     {
         if (updating || !IsLoaded) return;
         updating = true; string vendor = VendorBox.SelectedItem as string ?? "";
-        FlashNameBox.Text = vendor == "ASUS" ? newer?.SuggestedAsusName ?? "" : FlashProfile.DefaultName(vendor);
+        SetMethods(vendor);
         updating = false; Invalidate();
     }
-    FlashProfile Profile() => new(VendorBox.SelectedItem as string ?? "", BoardBox.Text.Trim(), FlashNameBox.Text.Trim());
+    void SetMethods(string vendor)
+    {
+        MethodBox.ItemsSource = FlashProfile.Methods(vendor);
+        MethodBox.SelectedIndex = 0;
+        SetFlashName();
+    }
+    void SetFlashName()
+    {
+        string vendor = VendorBox.SelectedItem as string ?? "";
+        string method = MethodBox.SelectedItem as string ?? FlashProfile.FlashBack;
+        FlashNameBox.Text = FlashProfile.SuggestedName(vendor, method, newer?.FileName, newer?.SuggestedAsusName);
+        FlashNameBox.IsReadOnly = method == FlashProfile.MFlash;
+        ProfileHint.Text = method == FlashProfile.MFlash
+            ? "M-FLASH keeps the NEW BIOS filename. MSI.ROM is only for the Flash BIOS Button. Modified firmware may be rejected."
+            : "Check button support and filename against the board manual. ASUS filenames are model-specific.";
+    }
+    void Method_Changed(object s, SelectionChangedEventArgs e)
+    {
+        if (updating || !IsLoaded) return;
+        updating = true; SetFlashName(); updating = false; Invalidate();
+    }
+    FlashProfile Profile() => new(VendorBox.SelectedItem as string ?? "", BoardBox.Text.Trim(), FlashNameBox.Text.Trim())
+    { Method = MethodBox.SelectedItem as string ?? FlashProfile.FlashBack, OriginalFileName = newer?.FileName };
     async void Known_Click(object s, RoutedEventArgs e) => await Run(async ct =>
     {
         var progress = new Progress<string>(text => StatusText.Text = text);
@@ -168,7 +191,8 @@ public partial class MainWindow : Window
         VerificationDetail.Text = $"{p.Manifest.Profile.Vendor} • {p.Manifest.Profile.Board}\nOriginal firmware preserved; donor microcode transferred and independently checked.";
         OutputHash.Text = $"SHA-256  {p.Manifest.CandidateHash}\n{p.Directory}";
         var scope = p.Manifest.Checks.FirstOrDefault(c => c.Name == "CPU compatibility")?.Detail ?? "";
-        PackageText.Text = $"{p.Manifest.Profile.Vendor} • {p.Manifest.Profile.Board}\nUSB filename: {p.Manifest.Profile.FileName}\n\n{scope}";
+        PackageText.Text = $"{p.Manifest.Profile.Vendor} • {p.Manifest.Profile.Board}\n{p.Manifest.Profile.Method}\nUSB filename: {p.Manifest.Profile.FileName}\n\n{scope}";
+        BoardGuideText.Text = p.Manifest.Profile.BoardInstructions;
         PackageText.ToolTip = p.Directory + "\n\n" + scope;
     }
     async void Inspect_Click(object s, RoutedEventArgs e)
@@ -199,7 +223,7 @@ public partial class MainWindow : Window
     {
         if (package is null || Drives.SelectedItem is not UsbDrive drive) return;
         var profile = package.Manifest.Profile; bool recovery = RecoveryChoice.IsChecked == true;
-        string message = $"Prepare {drive.Display}\n\n{profile.Vendor} • {profile.Board}\nWrite {(recovery ? "UNTOUCHED NEW BIOS / RECOVERY" : "MODIFIED BIOS")} as {drive.Root}{profile.FileName}?\n\nConfirm this exact board supports FlashBack and the filename matches its manual. An existing file at this path will be backed up locally and replaced. Other files remain. The app will not flash the motherboard.";
+        string message = $"Prepare {drive.Display}\n\n{profile.Vendor} • {profile.Board}\nMethod: {profile.Method}\nWrite {(recovery ? "UNTOUCHED NEW BIOS / RECOVERY" : "MODIFIED BIOS")} as {drive.Root}{profile.FileName}?\n\n{profile.BoardInstructions}\n\nAn existing file at this path will be backed up locally and replaced. Other files remain. The app will not flash the motherboard.";
         if (MessageBox.Show(this, message, "Confirm USB destination and board", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No) != MessageBoxResult.Yes) return;
         await Run(async ct => { UsbResult.Text = await WindowsServices.PrepareAsync(drive, package, recovery, new Progress<string>(text => StatusText.Text = text), ct); StatusText.Text = "USB prepared and read-back hash verified."; }, false);
     }
@@ -219,9 +243,20 @@ public partial class MainWindow : Window
         try
         {
             Directory.CreateDirectory(output); SetInput(FirmwareInput.Load(donorPath), true); SetInput(FirmwareInput.Load(basePath), false);
+            if (newer!.SuggestedVendor == "MSI")
+            {
+                if (Profile().Method != FlashProfile.MFlash || FlashNameBox.Text != newer.FileName) throw new Exception("M-FLASH default filename failed");
+                MethodBox.SelectedItem = FlashProfile.FlashBack;
+                if (FlashNameBox.Text != "MSI.ROM") throw new Exception("Button filename failed");
+                MethodBox.SelectedItem = FlashProfile.MFlash;
+                if (FlashNameBox.Text != newer.FileName || !FlashNameBox.IsReadOnly) throw new Exception("M-FLASH filename restoration failed");
+            }
             var donor = (Microcode)OldCodes.SelectedItem; var target = (Microcode)NewCodes.SelectedItem;
             var result = await Task.Run(() => Transfer.Build(newer!.Bytes, older!.Bytes, donor.Offset, target.Offset));
             package = await TransferPackage.ExportAsync(result, Profile(), output, null, CancellationToken.None);
+            var reopened = TransferPackage.Open(package.Directory);
+            if (reopened.Manifest.Profile.Method != Profile().Method || Path.GetFileName(reopened.CandidatePath) != Profile().FileName || Path.GetFileName(reopened.RecoveryPath) != Profile().FileName)
+                throw new Exception("Flash method or filenames did not survive package export/reload");
             ShowPackage(package); ShowInspection(Firmware.Inspect(result.Image, Profile().FileName));
             Drives.ItemsSource = await WindowsServices.DrivesAsync(); RefreshControls();
             StatusText.Text = "UI test • all verification passed. No USB or firmware writes.";
@@ -236,7 +271,7 @@ public partial class MainWindow : Window
                     Tabs.SelectedIndex = i; await Dispatcher.InvokeAsync(() => { }, System.Windows.Threading.DispatcherPriority.ApplicationIdle); UpdateLayout();
                     FrameworkElement page = i switch { 0 => TransferPage, 1 => VerificationPage, 2 => UsbPage, _ => InspectPage };
                     FrameworkElement[] probes = i switch {
-                        0 => [OldCodes, NewCodes, BoardBox, FlashNameBox, PlanText, CoverageText, BuildButton, KnownButton],
+                        0 => [OldCodes, NewCodes, MethodBox, BoardBox, FlashNameBox, ProfileHint, PlanText, CoverageText, BuildButton, KnownButton],
                         1 => [VerificationTitle, VerificationDetail, Checks, OutputHash, OpenPackageButton, GoUsbButton],
                         2 => [Drives, DriveStatus, ModifiedChoice, RecoveryChoice, PackageText, PrepareButton],
                         _ => [SystemText, ImageIdentity, ImageHash, MicrocodeGrid, InspectButton] };

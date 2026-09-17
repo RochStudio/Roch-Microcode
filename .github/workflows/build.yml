@@ -20,6 +20,9 @@ jobs:
       - name: Build portable Windows app
         shell: pwsh
         run: ./build.ps1
+      - name: Check flash method and filename rules
+        shell: pwsh
+        run: dotnet run --project tests/RochBios.ProfileTests -c Release
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:

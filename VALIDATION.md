@@ -1,5 +1,7 @@
 # Roch Microcode 1.0.0 verification
 
+The M-FLASH update passed 20 filename/method checks, including loading an existing MSI button package, JSON compatibility, incorrect target/version rejection and unchanged naming for other vendors. A real MPOWER PA / PRO Z790-A 11F transfer passed both independent verifiers, package reload and layout checks across four tabs, two themes and two window sizes. The UI test also verifies switching between M-FLASH and the button filename. No USB writes or hardware flashing were performed. Screenshots and evidence: `test-results/ui-mflash/`.
+
 Verified on Windows x64. Release 1.0.0 establishes the Roch Microcode version numbering; firmware behavior is unchanged from the initial 2.1.1 label. Existing app data and version 2 package compatibility are preserved. UI smoke testing runs a real independently verified transfer and captures all four tabs in both themes at 1180 × 800 and 1000 × 720, with control-boundary checks and visual review. No page scrollbars; long inventories retain table scrolling. **97 transfer tests and 36 regression/USB-policy tests passed for the same implementation before the version-only change.** The seven optional online-download tests passed in 2.0.0; downloader code is unchanged and those network tests were not repeated.
 
 The general engine built and exported these real BIOS pairs, each checked by bundled UEFIExtract A75 and MCExtractor 1.104.0/r352:

@@ -6,14 +6,14 @@
 
 Previously named **Roch BIOS**. The executable is now **RochMicrocode.exe**. Existing version 2 BIOS packages remain compatible.
 
-Roch Microcode is a portable Windows x64 app for Intel microcode transfer across supported **ASUS, MSI, ASRock and Gigabyte** firmware layouts. The general engine has no fixed motherboard, BIOS-version, revision or offset allowlist. It validates each input's actual structure. No separate .NET or Python installation is required.
+Roch Microcode is a Windows x64 app for Intel microcode transfer across supported **ASUS, MSI, ASRock and Gigabyte** firmware layouts. The general engine has no fixed motherboard, BIOS-version, revision or offset allowlist. It validates each input's actual structure. Downloads labelled `runtime-required` need the **.NET 10 Desktop Runtime (x64)**; self-contained builds include it. Python and the verification tools are bundled.
 
 ## Use
 
 1. Run `RochMicrocode.exe`. The compact layout fits at 1000 × 720 or larger (Windows logical pixels). Use the header theme button to switch light/dark; the choice is saved for next launch. The four pages do not scroll; long microcode inventories can scroll within their table.
 2. Drop the **old donor BIOS** on the left and the **new BIOS to modify** on the right. Browse buttons work too. Vendor ZIP packages containing one identifiable Intel BIOS can be dropped directly; bundled flash utilities are never executed.
 3. Select the microcode to copy from the old image. The new-image list contains only patches with the same primary CPU signature and a nonzero donor platform mask equal to or contained in the target mask. A narrower donor shows the reduced CPU/platform scope before building and in the verification and USB screens. Select the intended target when there are alternatives.
-4. Check the target manufacturer, exact motherboard model/hardware revision and FlashBack filename. Suggestions are conveniences, not motherboard identification guarantees.
+4. Check the target manufacturer, exact motherboard model/hardware revision, **flash method** and filename. MSI defaults to **M-FLASH (inside BIOS)** and preserves the new BIOS filename (for example, MPOWER PA uses `E7E01IMS.PA0`). Select **FlashBack / BIOS button** only when using that hardware feature; MSI then uses `MSI.ROM`. Suggestions are conveniences, not motherboard identification guarantees.
 5. Click **Build & verify** and choose an output folder. The app checks the structure, runs UEFIExtract and MCExtractor, then exports the modified image, untouched new BIOS for recovery, donor patch and reports.
 6. On **Prepare USB**, select an existing FAT32 / MBR USB drive with one partition and choose modified or recovery. Confirm the exact destination. Both verifiers run again before copying. Use separate labelled drives for modified and recovery images.
 7. Follow the exact board manual at the motherboard. The app does not flash firmware, format USB, install a driver, change settings or reboot.
@@ -30,7 +30,7 @@ An existing root BIOS file is saved under the app's local data folder in `USB ba
 - The donor may come from another motherboard when its selected Intel microcode meets the CPU/platform checks. The **new BIOS must belong to the target motherboard**; the donor's complete firmware is never flashed onto it.
 - Existing flash image/capsule layout and all addresses remain in place. The selected slot is filled with donor bytes and FF padding; an FFS data-checksum byte is repaired if required.
 
-**Brand support does not mean every board or every BIOS is editable or flashable.** AMD microcode/AGESA editing, compressed microcode, oversized replacements requiring relocation, non-FIT layouts, unsupported containers, and ambiguous recovery copies are rejected or inspection-only. A model must have the relevant hardware FlashBack feature. Signed capsules, Boot Guard, measured boot and rollback enforcement may reject a structurally valid modification; the app does not disable or bypass these checks.
+**Brand support does not mean every board or every BIOS is editable or flashable.** AMD microcode/AGESA editing, compressed microcode, oversized replacements requiring relocation, non-FIT layouts, unsupported containers, and ambiguous recovery copies are rejected or inspection-only. The model must support the selected flash method. M-FLASH may reject modified firmware even with the correct filename. Signed capsules, Boot Guard, measured boot and rollback enforcement may reject a structurally valid modification; the app does not disable or bypass these checks.
 
 Old patches can omit later fixes, mitigations or extended CPU signatures. The primary CPUID and donor platform scope are checked; support for every extended signature from the newer patch is not promised. Windows may load a newer revision. File verification does not establish bootability, security, recovery success or long-term stability.
 
@@ -39,11 +39,14 @@ Old patches can omit later fixes, mitigations or extended CPU signatures. The pr
 | Vendor | Default root filename | Reference |
 | --- | --- | --- |
 | ASUS | Model-specific `.CAP`; inferred when one unique name exists in firmware, otherwise enter it | [ASUS FlashBack](https://www.asus.com/us/support/faq/1038568/) |
-| MSI | `MSI.ROM` | [MSI Flash BIOS Button](https://www.msi.com/support/technical_details/MB_Flash_BIOS_Button) |
+| MSI M-FLASH (default) | Original **new BIOS** filename, including its version extension | [MSI M-FLASH](https://www.msi.com/support/technical_details/mb_bios_update) |
+| MSI Flash BIOS Button | `MSI.ROM` | [MSI Flash BIOS Button](https://www.msi.com/support/technical_details/MB_Flash_BIOS_Button) |
 | ASRock | `CREATIVE.ROM` | [ASRock Flashback](https://www.asrock.com/microsite/BIOSFlashback2026/) |
 | Gigabyte | `GIGABYTE.bin` | [Gigabyte Q-Flash Plus](https://www.gigabyte.com/FileUpload/Global/KeyFeature/3798/index.html) |
 
 The exact board manual takes precedence over a vendor-wide default. ASUS BIOSRenamer can establish its model-specific filename. Not all boards support hardware FlashBack.
+
+Existing packages keep their original method and filenames. To change an older `MSI.ROM` package to M-FLASH in the app, load the original donor and new vendor BIOS again, choose M-FLASH, then build and verify a new package. Load the original BIOS or vendor ZIP so the version filename is available; the app does not guess it from a renamed `MSI.ROM`.
 
 ## Verification and package contents
 
