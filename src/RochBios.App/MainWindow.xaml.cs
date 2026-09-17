@@ -205,6 +205,13 @@ public partial class MainWindow : Window
     }
     void Cancel_Click(object s, RoutedEventArgs e) => cancellation?.Cancel();
     static void Open(string target) => Process.Start(new ProcessStartInfo(target) { UseShellExecute = true });
+    void Social_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
+    {
+        e.Handled = true;
+        try { Open(e.Uri.AbsoluteUri); }
+        catch (Exception ex) when (ex is System.ComponentModel.Win32Exception or InvalidOperationException)
+        { StatusText.Text = "Could not open the link in your default browser: " + ex.Message; }
+    }
     void OpenPackage_Click(object s, RoutedEventArgs e) { if (package is not null) Open(package.Directory); }
     void Guide_Click(object s, RoutedEventArgs e) => Open(package?.Manifest.Profile.GuideUrl ?? Profile().GuideUrl);
     async Task SmokeTest(string basePath, string donorPath, string output)

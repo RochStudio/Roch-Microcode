@@ -18,6 +18,8 @@ Roch Microcode is a portable Windows x64 app for Intel microcode transfer across
 6. On **Prepare USB**, select an existing FAT32 / MBR USB drive with one partition and choose modified or recovery. Confirm the exact destination. Both verifiers run again before copying. Use separate labelled drives for modified and recovery images.
 7. Follow the exact board manual at the motherboard. The app does not flash firmware, format USB, install a driver, change settings or reboot.
 
+The app footer includes YouTube, X and Discord links on every tab; they open in your default browser.
+
 An existing root BIOS file is saved under the app's local data folder in `USB backups` before replacement. New installations use `%LOCALAPPDATA%/Roch Microcode/`; existing installations continue using `%LOCALAPPDATA%/Roch BIOS/` when that folder exists and the new folder does not. This preserves theme settings, tool caches and backups. The USB disk and volume identity are rechecked before writing and committing the staged file. The file is flushed and its SHA-256 verified by reading it back.
 
 ## What is supported

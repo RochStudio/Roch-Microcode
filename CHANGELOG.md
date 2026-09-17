@@ -2,6 +2,8 @@
 
 ## 1.0.0 — Roch Microcode
 
+- Added clickable YouTube, X and Discord links below the app status line, visible on every tab in both themes.
+
 - Licensed GPL-3.0-or-later, with the license and corresponding source supplied alongside the Windows release.
 
 - Intel microcode transfer across supported ASUS, MSI, ASRock and Gigabyte firmware layouts.
