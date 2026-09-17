@@ -82,3 +82,5 @@ Copyright (C) 2026 Roch Studio. Roch Microcode's own source code is licensed und
 The Windows release includes the license, and a matching source archive is available alongside it on the [release page](https://github.com/RochStudio/Roch-Microcode/releases/latest). Bundled third-party tools retain their respective licenses and notices; see [THIRD-PARTY.md](THIRD-PARTY.md).
 
 Created for [MateoPcTech](https://www.youtube.com/@MateoPcTech). Not affiliated with motherboard manufacturers or Intel.
+
+[YouTube](https://www.youtube.com/@MateoPcTech) | [X](https://x.com/MateoPCTech) | [Discord](https://discord.gg/KfzExpKQHB)
