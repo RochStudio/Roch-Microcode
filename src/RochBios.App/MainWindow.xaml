@@ -4,7 +4,7 @@
   <Grid Margin="0,0,0,12">
    <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
    <StackPanel><TextBlock FontSize="27" FontWeight="Bold"><Run Text="ROCH" Foreground="{DynamicResource Accent}"/><Run Text=" MICROCODE"/></TextBlock><TextBlock Text="Old microcode. New BIOS. Verified together." Style="{StaticResource Muted}" FontSize="12"/></StackPanel>
-   <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="0,0,22,0"><TextBlock Text="ASUS  /  MSI  /  ASRock  /  Gigabyte" HorizontalAlignment="Right" FontSize="12"/><TextBlock Text="Intel microcode transfer • v2.1.1" Style="{StaticResource Muted}" HorizontalAlignment="Right" FontSize="12" Margin="0,3,0,0"/></StackPanel>
+   <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="0,0,22,0"><TextBlock Text="ASUS  /  MSI  /  ASRock  /  Gigabyte" HorizontalAlignment="Right" FontSize="12"/><TextBlock Text="Intel microcode transfer • v1.0.0" Style="{StaticResource Muted}" HorizontalAlignment="Right" FontSize="12" Margin="0,3,0,0"/></StackPanel>
    <Button x:Name="ThemeButton" Grid.Column="2" Content="Light theme" VerticalAlignment="Center" Click="Theme_Click" Margin="0" MinWidth="108" AutomationProperties.Name="Switch light or dark theme"/>
   </Grid>
   <TabControl x:Name="Tabs" Grid.Row="1">
@@ -100,7 +100,7 @@
        <TextBlock Grid.Row="4" Text="Uncompressed Intel microcodes. Checksums do not establish CPU compatibility or Intel signature authenticity." Style="{StaticResource Muted}" FontSize="11"/>
       </Grid>
      </Border>
-     <TextBlock Grid.Row="2" Text="Roch Microcode 2.1.1 • MateoPcTech. UEFIExtract by LongSoft; MCExtractor by Plato Mavropoulos. Licenses included." Style="{StaticResource Muted}" FontSize="11" Margin="0,8,0,0"/>
+     <TextBlock Grid.Row="2" Text="Roch Microcode 1.0.0 • MateoPcTech. UEFIExtract by LongSoft; MCExtractor by Plato Mavropoulos. Licenses included." Style="{StaticResource Muted}" FontSize="11" Margin="0,8,0,0"/>
     </Grid>
    </TabItem>
   </TabControl>

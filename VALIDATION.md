@@ -1,6 +1,6 @@
-# Roch Microcode 2.1.1 verification
+# Roch Microcode 1.0.0 verification
 
-Verified on Windows x64. Version 2.1.1 renames the product and preserves existing app data and package compatibility. Version 2.1 changes the WPF layout and themes; the firmware transfer and verification engine is unchanged. UI smoke testing runs a real independently verified transfer and captures all four tabs in both themes at 1180 × 800 and 1000 × 720, with control-boundary checks and visual review. No page scrollbars; long inventories retain table scrolling. **97 transfer tests and 36 regression/USB-policy tests passed again for 2.1.1.** The seven optional online-download tests passed in 2.0.0; downloader code is unchanged and those network tests were not repeated.
+Verified on Windows x64. Release 1.0.0 establishes the Roch Microcode version numbering; firmware behavior is unchanged from the initial 2.1.1 label. Existing app data and version 2 package compatibility are preserved. UI smoke testing runs a real independently verified transfer and captures all four tabs in both themes at 1180 × 800 and 1000 × 720, with control-boundary checks and visual review. No page scrollbars; long inventories retain table scrolling. **97 transfer tests and 36 regression/USB-policy tests passed for the same implementation before the version-only change.** The seven optional online-download tests passed in 2.0.0; downloader code is unchanged and those network tests were not repeated.
 
 The general engine built and exported these real BIOS pairs, each checked by bundled UEFIExtract A75 and MCExtractor 1.104.0/r352:
 
@@ -21,7 +21,7 @@ The MSI 1K regression checks donor bytes, FF slot padding, reduced scope in repo
 
 No physical USB writing or motherboard flashing was performed during this update. USB storage policy and verified file writes were tested with isolated fixtures. The app remains unsigned. File checks cannot prove capsule signature validity, Boot Guard or rollback acceptance, successful FlashBack, recovery or stability.
 
-Local test logs and generated packages are in `test-results/`. UI screenshots and the published EXE smoke-test result are under `test-results/ui-v2.1.1/`.
+Local test logs and generated packages are in `test-results/`. UI screenshots and the published EXE smoke-test result are under `test-results/ui-v1.0.0/`.
 
 ## Official fixture sources
 

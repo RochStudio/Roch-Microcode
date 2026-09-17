@@ -7,7 +7,8 @@
     <Nullable>enable</Nullable>
     <AssemblyName>RochMicrocode</AssemblyName>
     <ApplicationIcon>../../assets/RochMicrocode.ico</ApplicationIcon>
-    <Version>2.1.1</Version>
+    <Version>1.0.0</Version>
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
     <Product>Roch Microcode</Product>
     <Description>Intel BIOS microcode transfer, independent verification and USB preparation</Description>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
