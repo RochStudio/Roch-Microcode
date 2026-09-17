@@ -1,0 +1,44 @@
+name: Publish existing release assets
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  publish:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Build and package current version
+        shell: pwsh
+        run: |
+          ./build.ps1
+          [xml]$project = Get-Content src/RochBios.App/RochBios.App.csproj
+          $version = [string]$project.Project.PropertyGroup.Version
+          if ($version -notmatch '^\d+\.\d+\.\d+$') { throw 'Invalid release version' }
+          New-Item -ItemType Directory -Path release-output | Out-Null
+          $windowsName = "RochMicrocode-$version-win-x64.zip"
+          $sourceName = "RochMicrocode-$version-source.zip"
+          Compress-Archive -Path dist/* -DestinationPath "release-output/$windowsName"
+          git archive --format=zip --prefix="Roch-Microcode-$version/" --output="release-output/$sourceName" HEAD
+          if ($LASTEXITCODE -ne 0) { throw 'Source archive failed' }
+          $hashes = @((Get-FileHash dist/RochMicrocode.exe).Hash + '  RochMicrocode.exe')
+          foreach ($name in @($windowsName, $sourceName)) { $hashes += (Get-FileHash "release-output/$name").Hash + '  ' + $name }
+          $hashes | Set-Content "release-output/RochMicrocode-$version-SHA256.txt"
+          "RELEASE_TAG=v$version" >> $env:GITHUB_ENV
+      - name: Upload assets to the existing release
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view $env:RELEASE_TAG --repo $env:GITHUB_REPOSITORY
+          if ($LASTEXITCODE -ne 0) { throw 'Create and review the release before publishing assets' }
+          foreach ($file in Get-ChildItem release-output -File) {
+            gh release upload $env:RELEASE_TAG $file.FullName --repo $env:GITHUB_REPOSITORY --clobber
+            if ($LASTEXITCODE -ne 0) { throw "Upload failed: $($file.Name)" }
+          }
