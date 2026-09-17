@@ -1,0 +1,14 @@
+**/bin/
+**/obj/
+dist/
+releases/
+test-results/
+.vs/
+*.user
+.env
+.env.*
+!.env.example
+*.pfx
+*.p12
+*.key
+artifacts/

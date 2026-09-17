@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>RochMicrocode</AssemblyName>
+    <ApplicationIcon>../../assets/RochMicrocode.ico</ApplicationIcon>
+    <Version>2.1.1</Version>
+    <Product>Roch Microcode</Product>
+    <Description>Intel BIOS microcode transfer, independent verification and USB preparation</Description>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <SelfContained>true</SelfContained>
+    <PublishSingleFile>true</PublishSingleFile>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+  </PropertyGroup>
+  <ItemGroup><ProjectReference Include="../RochBios.Core/RochBios.Core.csproj" /></ItemGroup>
+  <ItemGroup><Resource Include="../../assets/RochMicrocode.ico" Link="Assets/RochMicrocode.ico" /></ItemGroup>
+</Project>

@@ -1,0 +1,28 @@
+name: Windows build
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+      - name: Build portable Windows app
+        shell: pwsh
+        run: ./build.ps1
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: RochMicrocode-win-x64
+          path: dist/
+          if-no-files-found: error

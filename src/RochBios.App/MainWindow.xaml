@@ -1,0 +1,109 @@
+<Window x:Class="RochBios.App.MainWindow" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Style="{StaticResource {x:Type Window}}" Title="Roch Microcode" Icon="Assets/RochMicrocode.ico" Width="1180" Height="800" MinWidth="1000" MinHeight="720" WindowStartupLocation="CenterScreen">
+ <Grid Margin="20,14">
+  <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+  <Grid Margin="0,0,0,12">
+   <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
+   <StackPanel><TextBlock FontSize="27" FontWeight="Bold"><Run Text="ROCH" Foreground="{DynamicResource Accent}"/><Run Text=" MICROCODE"/></TextBlock><TextBlock Text="Old microcode. New BIOS. Verified together." Style="{StaticResource Muted}" FontSize="12"/></StackPanel>
+   <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="0,0,22,0"><TextBlock Text="ASUS  /  MSI  /  ASRock  /  Gigabyte" HorizontalAlignment="Right" FontSize="12"/><TextBlock Text="Intel microcode transfer • v2.1.1" Style="{StaticResource Muted}" HorizontalAlignment="Right" FontSize="12" Margin="0,3,0,0"/></StackPanel>
+   <Button x:Name="ThemeButton" Grid.Column="2" Content="Light theme" VerticalAlignment="Center" Click="Theme_Click" Margin="0" MinWidth="108" AutomationProperties.Name="Switch light or dark theme"/>
+  </Grid>
+  <TabControl x:Name="Tabs" Grid.Row="1">
+   <TabItem Header="01  Transfer">
+    <Grid x:Name="TransferPage" TextElement.Foreground="{DynamicResource Text}">
+     <Grid.RowDefinitions><RowDefinition Height="*"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+     <Grid Margin="0,0,0,10">
+      <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="12"/><ColumnDefinition/></Grid.ColumnDefinitions>
+      <Border x:Name="OldDrop" Style="{StaticResource Card}" AllowDrop="True" DragOver="File_DragOver" Drop="Old_Drop">
+       <Grid>
+        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+        <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><StackPanel><TextBlock Text="OLD BIOS / DONOR" Foreground="{DynamicResource Accent}" FontWeight="SemiBold" FontSize="11"/><TextBlock Text="Drop the old BIOS here" Style="{StaticResource Heading}" Margin="0,3,0,0"/></StackPanel><Button x:Name="OldButton" Grid.Column="1" Content="Browse…" Click="Old_Click" Margin="8,0,0,0" VerticalAlignment="Center"/></Grid>
+        <TextBlock Grid.Row="1" Text="Copy a CPU microcode from a BIOS file or vendor ZIP." Style="{StaticResource Muted}" FontSize="12" Margin="0,7,0,0"/>
+        <StackPanel Grid.Row="2" VerticalAlignment="Center" Margin="0,10"><TextBlock x:Name="OldName" Text="No old BIOS selected" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" FontWeight="SemiBold"/><TextBlock x:Name="OldDetail" Text="Intel CAP / BIN / ROM / vendor file / ZIP" Style="{StaticResource Muted}" FontSize="12" Margin="0,3,0,0"/></StackPanel>
+        <StackPanel Grid.Row="3"><TextBlock Text="Microcode to copy" Style="{StaticResource Label}"/><ComboBox x:Name="OldCodes" DisplayMemberPath="Display" SelectionChanged="OldCode_Changed" AutomationProperties.Name="Old BIOS microcode" FontFamily="Consolas" FontSize="12"/></StackPanel>
+       </Grid>
+      </Border>
+      <Border x:Name="NewDrop" Grid.Column="2" Style="{StaticResource Card}" AllowDrop="True" DragOver="File_DragOver" Drop="New_Drop">
+       <Grid>
+        <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+        <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><StackPanel><TextBlock Text="NEW BIOS / TARGET" Foreground="{DynamicResource Accent}" FontWeight="SemiBold" FontSize="11"/><TextBlock Text="Drop the new BIOS here" Style="{StaticResource Heading}" Margin="0,3,0,0"/></StackPanel><Button x:Name="NewButton" Grid.Column="1" Content="Browse…" Click="New_Click" Margin="8,0,0,0" VerticalAlignment="Center"/></Grid>
+        <TextBlock Grid.Row="1" Text="Use your target board's BIOS. The original is preserved." Style="{StaticResource Muted}" FontSize="12" Margin="0,7,0,0"/>
+        <StackPanel Grid.Row="2" VerticalAlignment="Center" Margin="0,10"><TextBlock x:Name="NewName" Text="No new BIOS selected" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" FontWeight="SemiBold"/><TextBlock x:Name="NewDetail" Text="Use the exact motherboard model and revision" Style="{StaticResource Muted}" FontSize="12" Margin="0,3,0,0"/></StackPanel>
+        <StackPanel Grid.Row="3"><TextBlock Text="Matching microcode to replace" Style="{StaticResource Label}"/><ComboBox x:Name="NewCodes" DisplayMemberPath="Display" SelectionChanged="NewCode_Changed" AutomationProperties.Name="New BIOS target microcode" FontFamily="Consolas" FontSize="12"/></StackPanel>
+       </Grid>
+      </Border>
+     </Grid>
+     <Border Grid.Row="1" Style="{StaticResource Card}" Margin="0,0,0,10" Padding="14,11">
+      <Grid>
+       <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+       <Grid.ColumnDefinitions><ColumnDefinition Width="140"/><ColumnDefinition Width="12"/><ColumnDefinition/><ColumnDefinition Width="12"/><ColumnDefinition Width="185"/></Grid.ColumnDefinitions>
+       <StackPanel><TextBlock Text="Manufacturer" Style="{StaticResource Label}"/><ComboBox x:Name="VendorBox" SelectionChanged="Vendor_Changed" AutomationProperties.Name="Target manufacturer"/></StackPanel>
+       <StackPanel Grid.Column="2"><TextBlock Text="Target motherboard / hardware revision" Style="{StaticResource Label}"/><TextBox x:Name="BoardBox" MinHeight="34" TextChanged="Profile_Changed" AutomationProperties.Name="Target motherboard model and revision"/></StackPanel>
+       <StackPanel Grid.Column="4"><TextBlock Text="USB root filename" Style="{StaticResource Label}"/><TextBox x:Name="FlashNameBox" MinHeight="34" TextChanged="Profile_Changed" AutomationProperties.Name="FlashBack BIOS filename" FontFamily="Consolas"/></StackPanel>
+       <TextBlock Grid.Row="1" Grid.ColumnSpan="5" Text="Check model and filename against the board manual. ASUS filenames are model-specific." Style="{StaticResource Muted}" FontSize="11" Margin="0,7,0,0"/>
+      </Grid>
+     </Border>
+     <Border Grid.Row="2" Style="{StaticResource Card}" Padding="14,11">
+      <StackPanel>
+       <TextBlock x:Name="PlanText" Text="Choose the old and new BIOS to start." FontSize="15" FontWeight="SemiBold"/>
+       <TextBlock x:Name="CoverageText" Foreground="{DynamicResource Warning}" FontSize="12" Margin="0,5,0,0" Visibility="Collapsed"/>
+       <Grid Margin="0,10,0,0"><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/><ColumnDefinition/></Grid.ColumnDefinitions><Button x:Name="BuildButton" Content="Build &amp; verify…" Style="{StaticResource PrimaryButton}" IsEnabled="False" Click="Build_Click"/><Button x:Name="KnownButton" Grid.Column="1" Content="ASUS 3202 / 11F example" Click="Known_Click"/><TextBlock Grid.Column="2" Text="Native checks + UEFIExtract + MCExtractor" Style="{StaticResource Muted}" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="12"/></Grid>
+       <TextBlock Text="Older microcode can omit fixes. File checks do not prove bootability. Supported: Intel FIT with uncompressed slots; equal-size or smaller donor." Style="{StaticResource Muted}" FontSize="11" Margin="0,8,0,0"/>
+      </StackPanel>
+     </Border>
+    </Grid>
+   </TabItem>
+   <TabItem Header="02  Verification">
+    <Grid x:Name="VerificationPage" TextElement.Foreground="{DynamicResource Text}">
+     <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+     <StackPanel Margin="2,0,0,10"><TextBlock x:Name="VerificationTitle" Text="Verification results will appear here" FontSize="21" FontWeight="SemiBold"/><TextBlock x:Name="VerificationDetail" Text="UEFIExtract and MCExtractor are bundled. Build a package to view all eight checks." Style="{StaticResource Muted}" FontSize="12" Margin="0,5,0,0"/></StackPanel>
+     <ItemsControl x:Name="Checks" Grid.Row="1" Margin="0,0,0,6" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
+      <ItemsControl.ItemsPanel><ItemsPanelTemplate><UniformGrid Columns="2" Rows="4"/></ItemsPanelTemplate></ItemsControl.ItemsPanel>
+      <ItemsControl.ItemTemplate><DataTemplate><Border Style="{StaticResource Card}" Padding="12,8" Margin="4,0,4,8" ToolTip="{Binding FullDetail}"><StackPanel VerticalAlignment="Center"><TextBlock Text="{Binding Name}" Foreground="{DynamicResource Success}" FontWeight="SemiBold"/><TextBlock Text="{Binding Detail}" Foreground="{DynamicResource MutedText}" FontSize="12" Margin="0,4,0,0"/></StackPanel></Border></DataTemplate></ItemsControl.ItemTemplate>
+     </ItemsControl>
+     <Border Grid.Row="2" Style="{StaticResource Card}" Padding="14,10">
+      <StackPanel><TextBox x:Name="OutputHash" IsReadOnly="True" TextWrapping="NoWrap" Background="Transparent" BorderThickness="0" Padding="0" FontFamily="Consolas" FontSize="11" Margin="0,0,0,8" ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"/>
+       <Grid><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/><ColumnDefinition/></Grid.ColumnDefinitions><Button x:Name="OpenPackageButton" Content="Open package &amp; reports" IsEnabled="False" Click="OpenPackage_Click"/><Button x:Name="GoUsbButton" Grid.Column="1" Content="Prepare USB →" Style="{StaticResource PrimaryButton}" IsEnabled="False" Click="GoUsb_Click"/><TextBlock Grid.Column="2" Text="File integrity verified; vendor acceptance, hardware booting and stability remain untested." Foreground="{DynamicResource Warning}" FontSize="11" VerticalAlignment="Center" Margin="12,0,0,0"/></Grid>
+      </StackPanel>
+     </Border>
+    </Grid>
+   </TabItem>
+   <TabItem Header="03  Prepare USB">
+    <Grid x:Name="UsbPage" TextElement.Foreground="{DynamicResource Text}">
+     <Grid.ColumnDefinitions><ColumnDefinition Width="1.15*"/><ColumnDefinition Width="12"/><ColumnDefinition/></Grid.ColumnDefinitions>
+     <Border Style="{StaticResource Card}">
+      <Grid>
+       <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+       <TextBlock Text="Prepare a FlashBack drive" FontSize="21" FontWeight="SemiBold"/>
+       <WrapPanel Grid.Row="1" Margin="0,16,0,12"><Button x:Name="RefreshUsbButton" Content="Refresh USB drives" Click="RefreshUsb_Click"/><Button x:Name="LoadPackageButton" Content="Open package…" Click="LoadPackage_Click"/></WrapPanel>
+       <StackPanel Grid.Row="2"><TextBlock Text="USB destination" Style="{StaticResource Label}"/><ComboBox x:Name="Drives" DisplayMemberPath="Display" SelectionChanged="Drive_Changed" AutomationProperties.Name="USB destination"/><TextBlock x:Name="DriveStatus" Text="Existing FAT32 / MBR USB drive with one partition." Foreground="{DynamicResource Warning}" FontSize="12" Margin="0,8,0,16"/></StackPanel>
+       <StackPanel Grid.Row="3"><RadioButton x:Name="ModifiedChoice" Content="Modified BIOS with the selected microcode" IsChecked="True"/><RadioButton x:Name="RecoveryChoice" Content="Untouched new BIOS for recovery"/></StackPanel>
+       <TextBlock x:Name="UsbResult" Grid.Row="4" Foreground="{DynamicResource Success}" FontSize="12" Margin="0,10,0,10"/>
+       <StackPanel Grid.Row="5"><TextBlock Text="Rechecks the files and drive identity, backs up an existing BIOS file, then copies and verifies the result." Style="{StaticResource Muted}" FontSize="12" Margin="0,0,0,10"/><Button x:Name="PrepareButton" Content="Verify again &amp; prepare USB…" Style="{StaticResource PrimaryButton}" HorizontalAlignment="Left" IsEnabled="False" Click="Prepare_Click"/></StackPanel>
+      </Grid>
+     </Border>
+     <Grid Grid.Column="2"><Grid.RowDefinitions><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+      <Border Style="{StaticResource Card}" Margin="0,0,0,12"><StackPanel><TextBlock Text="Selected package" Style="{StaticResource Heading}"/><TextBlock x:Name="PackageText" Text="Build and verify a package, or open an existing version 2 package." Style="{StaticResource Muted}" FontSize="12" Margin="0,10,0,0" ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"/></StackPanel></Border>
+      <Border Grid.Row="1" Style="{StaticResource Card}"><StackPanel><TextBlock Text="At the motherboard" Style="{StaticResource Heading}"/><TextBlock Text="Confirm FlashBack support, filename, USB port and power connections in the board manual. Keep a separate recovery drive. Do not interrupt power while flashing." Margin="0,8,0,10" FontSize="12"/><Button Content="Board vendor guide ↗" Click="Guide_Click" HorizontalAlignment="Left"/><TextBlock Text="The app does not format the drive or flash the motherboard." Style="{StaticResource Muted}" FontSize="11" Margin="0,10,0,0"/></StackPanel></Border>
+     </Grid>
+    </Grid>
+   </TabItem>
+   <TabItem Header="Inspect &amp; system">
+    <Grid x:Name="InspectPage" TextElement.Foreground="{DynamicResource Text}">
+     <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+     <Border Style="{StaticResource Card}" Padding="14,10" Margin="0,0,0,10"><Grid><Grid.ColumnDefinitions><ColumnDefinition Width="145"/><ColumnDefinition/></Grid.ColumnDefinitions><TextBlock Text="This computer" FontWeight="SemiBold" VerticalAlignment="Center"/><TextBlock x:Name="SystemText" Grid.Column="1" Text="Reading system information…" Style="{StaticResource Muted}" FontSize="12"/></Grid></Border>
+     <Border Grid.Row="1" Style="{StaticResource Card}">
+      <Grid><Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
+       <DockPanel><Button x:Name="InspectButton" Content="Open firmware…" DockPanel.Dock="Right" HorizontalAlignment="Right" Click="Inspect_Click" Margin="0"/><TextBlock Text="Firmware microcodes" Style="{StaticResource Heading}" VerticalAlignment="Center"/></DockPanel>
+       <TextBlock x:Name="ImageIdentity" Grid.Row="1" Text="No image selected" FontWeight="SemiBold" Margin="0,8,0,3"/>
+       <TextBox x:Name="ImageHash" Grid.Row="2" IsReadOnly="True" TextWrapping="NoWrap" Background="Transparent" BorderThickness="0" Padding="0" FontFamily="Consolas" FontSize="11" ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"/>
+       <DataGrid x:Name="MicrocodeGrid" Grid.Row="3" Margin="0,10,0,8"><DataGrid.Columns><DataGridTextColumn Header="CPU" Binding="{Binding CpuText}" Width="*"/><DataGridTextColumn Header="Platform" Binding="{Binding PlatformText}" Width="*"/><DataGridTextColumn Header="Revision" Binding="{Binding RevisionText}" Width="*"/><DataGridTextColumn Header="Date" Binding="{Binding Date}" Width="1.2*"/><DataGridTextColumn Header="Size" Binding="{Binding SizeText}" Width="*"/><DataGridTextColumn Header="Offset" Binding="{Binding OffsetText}" Width="1.1*"/><DataGridTextColumn Header="Checksum" Binding="{Binding Status}" Width="1.7*"/></DataGrid.Columns></DataGrid>
+       <TextBlock Grid.Row="4" Text="Uncompressed Intel microcodes. Checksums do not establish CPU compatibility or Intel signature authenticity." Style="{StaticResource Muted}" FontSize="11"/>
+      </Grid>
+     </Border>
+     <TextBlock Grid.Row="2" Text="Roch Microcode 2.1.1 • MateoPcTech. UEFIExtract by LongSoft; MCExtractor by Plato Mavropoulos. Licenses included." Style="{StaticResource Muted}" FontSize="11" Margin="0,8,0,0"/>
+    </Grid>
+   </TabItem>
+  </TabControl>
+  <Grid Grid.Row="2" Margin="0,10,0,0"><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><StackPanel><ProgressBar x:Name="Progress" Height="3" IsIndeterminate="True" Foreground="{DynamicResource Accent}" Visibility="Collapsed" Margin="0,0,0,5"/><TextBlock x:Name="StatusText" Text="Ready • drop an old BIOS and a new BIOS to begin." Foreground="{DynamicResource MutedText}" FontSize="12" TextWrapping="NoWrap" TextTrimming="CharacterEllipsis" ToolTip="{Binding Text, RelativeSource={RelativeSource Self}}"/></StackPanel><Button x:Name="CancelButton" Grid.Column="1" Content="Cancel" Visibility="Collapsed" Click="Cancel_Click" Padding="12,3" Margin="12,0,0,0"/></Grid>
+ </Grid>
+</Window>
