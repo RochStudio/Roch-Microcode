@@ -77,6 +77,8 @@ Firmware fixtures, generated BIOS images, local reports and USB backups are not 
 
 ## Licensing
 
-No open-source license has yet been assigned to Roch Microcode's own source code. Bundled third-party tools retain their respective licenses; see [THIRD-PARTY.md](THIRD-PARTY.md).
+Copyright (C) 2026 Roch Studio. Roch Microcode's own source code is licensed under **GPL-3.0-or-later**, matching the other Roch tools. You may redistribute and modify it under the GNU General Public License version 3 or, at your option, any later version. It is provided without warranty; see [LICENSE](LICENSE) for the full terms.
+
+The Windows release includes the license, and a matching source archive is available alongside it on the [release page](https://github.com/RochStudio/Roch-Microcode/releases/latest). Bundled third-party tools retain their respective licenses and notices; see [THIRD-PARTY.md](THIRD-PARTY.md).
 
 Created for [MateoPcTech](https://www.youtube.com/@MateoPcTech). Not affiliated with motherboard manufacturers or Intel.

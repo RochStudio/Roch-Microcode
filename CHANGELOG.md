@@ -2,6 +2,8 @@
 
 ## 1.0.0 — Roch Microcode
 
+- Licensed GPL-3.0-or-later, with the license and corresponding source supplied alongside the Windows release.
+
 - Intel microcode transfer across supported ASUS, MSI, ASRock and Gigabyte firmware layouts.
 - Bundled native checks, UEFIExtract and MCExtractor verification, recovery packages and verified USB preparation.
 - Compact pages with primary actions visible at 1000 × 720 or larger.

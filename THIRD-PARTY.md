@@ -1,5 +1,7 @@
 # Bundled verification tools
 
+Roch Microcode itself is licensed GPL-3.0-or-later; see `LICENSE`. The third-party components below retain their own licenses and copyright notices.
+
 Roch Microcode distributes these tools without source modifications. Their license notices are included in `THIRD-PARTY/` and in the embedded verification archive.
 
 | Component | Version | Upstream |

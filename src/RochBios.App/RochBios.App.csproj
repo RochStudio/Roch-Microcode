@@ -10,6 +10,8 @@
     <Version>1.0.0</Version>
     <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
     <Product>Roch Microcode</Product>
+    <Copyright>Copyright (C) 2026 Roch Studio</Copyright>
+    <PackageLicenseExpression>GPL-3.0-or-later</PackageLicenseExpression>
     <Description>Intel BIOS microcode transfer, independent verification and USB preparation</Description>
     <RuntimeIdentifier>win-x64</RuntimeIdentifier>
     <SelfContained>true</SelfContained>
