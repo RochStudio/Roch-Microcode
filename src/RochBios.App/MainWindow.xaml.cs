@@ -14,11 +14,11 @@ public partial class MainWindow : Window
     TransferPackage? package;
     bool busy, updating;
     CancellationTokenSource? cancellation;
-    readonly string cache = Path.Combine(AppPaths.DataDirectory, "cache");
     public MainWindow()
     {
         InitializeComponent(); VendorBox.ItemsSource = FlashProfile.Vendors;
         UpdateThemeButton();
+        SourceInitialized += (_, _) => WindowTheme.Apply(this, ((App)Application.Current).IsLightTheme);
         // Fit the initial window to the available desktop in WPF device-independent units.
         Width = Math.Min(Width, SystemParameters.WorkArea.Width);
         Height = Math.Min(Height, SystemParameters.WorkArea.Height);
@@ -41,7 +41,7 @@ public partial class MainWindow : Window
     void RefreshControls()
     {
         if (BuildButton is null) return;
-        foreach (var b in new[] { OldButton, NewButton, KnownButton, InspectButton, RefreshUsbButton, LoadPackageButton }) b.IsEnabled = !busy;
+        foreach (var b in new[] { OldButton, NewButton, InspectButton, RefreshUsbButton, LoadPackageButton }) b.IsEnabled = !busy;
         OldDrop.AllowDrop = NewDrop.AllowDrop = !busy;
         OldCodes.IsEnabled = NewCodes.IsEnabled = VendorBox.IsEnabled = MethodBox.IsEnabled = BoardBox.IsEnabled = FlashNameBox.IsEnabled = !busy;
         BuildButton.IsEnabled = !busy && OldCodes.SelectedItem is Microcode d && NewCodes.SelectedItem is Microcode t && Transfer.CanReplace(d, t) && d.Revision != t.Revision && d.Size <= t.Size;
@@ -160,14 +160,6 @@ public partial class MainWindow : Window
     }
     FlashProfile Profile() => new(VendorBox.SelectedItem as string ?? "", BoardBox.Text.Trim(), FlashNameBox.Text.Trim())
     { Method = MethodBox.SelectedItem as string ?? FlashProfile.FlashBack, OriginalFileName = newer?.FileName };
-    async void Known_Click(object s, RoutedEventArgs e) => await Run(async ct =>
-    {
-        var progress = new Progress<string>(text => StatusText.Text = text);
-        string old = await OfficialDownloads.FetchAsync(Recipe.DonorDownload, cache, progress, ct);
-        string next = await OfficialDownloads.FetchAsync(Recipe.BaseDownload, cache, progress, ct);
-        SetInput(await Task.Run(() => FirmwareInput.Load(old), ct), true); SetInput(await Task.Run(() => FirmwareInput.Load(next), ct), false);
-        StatusText.Text = "ASUS example loaded. Build uses the same general transfer engine as other boards.";
-    });
     async void Build_Click(object s, RoutedEventArgs e)
     {
         var dialog = new OpenFolderDialog { Title = "Save the verified BIOS package in…" }; if (dialog.ShowDialog(this) != true) return;
@@ -271,7 +263,7 @@ public partial class MainWindow : Window
                     Tabs.SelectedIndex = i; await Dispatcher.InvokeAsync(() => { }, System.Windows.Threading.DispatcherPriority.ApplicationIdle); UpdateLayout();
                     FrameworkElement page = i switch { 0 => TransferPage, 1 => VerificationPage, 2 => UsbPage, _ => InspectPage };
                     FrameworkElement[] probes = i switch {
-                        0 => [OldCodes, NewCodes, MethodBox, BoardBox, FlashNameBox, ProfileHint, PlanText, CoverageText, BuildButton, KnownButton],
+                        0 => [OldCodes, NewCodes, MethodBox, BoardBox, FlashNameBox, ProfileHint, PlanText, CoverageText, BuildButton],
                         1 => [VerificationTitle, VerificationDetail, Checks, OutputHash, OpenPackageButton, GoUsbButton],
                         2 => [Drives, DriveStatus, ModifiedChoice, RecoveryChoice, PackageText, PrepareButton],
                         _ => [SystemText, ImageIdentity, ImageHash, MicrocodeGrid, InspectButton] };

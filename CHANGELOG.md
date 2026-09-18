@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.0.1
+
+- Darker neutral background, inset inputs and subtler card borders.
+- Native title bar matches the active theme on Windows 11, including theme changes.
+- Smaller header, simpler donor/target labels and understated navigation tabs.
+- Removed the ASUS example button and download action; users supply their own BIOS files.
+- Preserved light theme, social links, M-FLASH naming and existing package compatibility.
+
 ## 1.0.0 — Roch Microcode
 
 - MSI now defaults to M-FLASH with the original new BIOS filename; the separate Flash BIOS Button option uses MSI.ROM. Package instructions and USB preparation follow the chosen method. Existing packages retain their original method.

@@ -3,8 +3,8 @@
   <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
   <Grid Margin="0,0,0,12">
    <Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-   <StackPanel><TextBlock FontSize="27" FontWeight="Bold"><Run Text="ROCH" Foreground="{DynamicResource Accent}"/><Run Text=" MICROCODE"/></TextBlock><TextBlock Text="Old microcode. New BIOS. Verified together." Style="{StaticResource Muted}" FontSize="12"/></StackPanel>
-   <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="0,0,22,0"><TextBlock Text="ASUS  /  MSI  /  ASRock  /  Gigabyte" HorizontalAlignment="Right" FontSize="12"/><TextBlock Text="Intel microcode transfer • v1.0.0" Style="{StaticResource Muted}" HorizontalAlignment="Right" FontSize="12" Margin="0,3,0,0"/></StackPanel>
+   <StackPanel><TextBlock FontSize="23" FontWeight="Bold"><Run Text="ROCH" Foreground="{DynamicResource Accent}"/><Run Text=" MICROCODE"/></TextBlock><TextBlock Text="Intel microcode transfer" Style="{StaticResource Muted}" FontSize="12"/></StackPanel>
+   <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="0,0,22,0"><TextBlock Text="ASUS  /  MSI  /  ASRock  /  Gigabyte" Style="{StaticResource Muted}" HorizontalAlignment="Right" FontSize="12"/><TextBlock Text="Version 1.0.1" Style="{StaticResource Muted}" HorizontalAlignment="Right" FontSize="12" Margin="0,3,0,0"/></StackPanel>
    <Button x:Name="ThemeButton" Grid.Column="2" Content="Light theme" VerticalAlignment="Center" Click="Theme_Click" Margin="0" MinWidth="108" AutomationProperties.Name="Switch light or dark theme"/>
   </Grid>
   <TabControl x:Name="Tabs" Grid.Row="1">
@@ -16,7 +16,7 @@
       <Border x:Name="OldDrop" Style="{StaticResource Card}" AllowDrop="True" DragOver="File_DragOver" Drop="Old_Drop">
        <Grid>
         <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
-        <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><StackPanel><TextBlock Text="OLD BIOS / DONOR" Foreground="{DynamicResource Accent}" FontWeight="SemiBold" FontSize="11"/><TextBlock Text="Drop the old BIOS here" Style="{StaticResource Heading}" Margin="0,3,0,0"/></StackPanel><Button x:Name="OldButton" Grid.Column="1" Content="Browse…" Click="Old_Click" Margin="8,0,0,0" VerticalAlignment="Center"/></Grid>
+        <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><StackPanel><TextBlock Text="01  DONOR BIOS" Foreground="{DynamicResource Accent}" FontWeight="SemiBold" FontSize="11"/><TextBlock Text="Drop donor BIOS" Style="{StaticResource Heading}" Margin="0,3,0,0"/></StackPanel><Button x:Name="OldButton" Grid.Column="1" Content="Browse…" Click="Old_Click" Margin="8,0,0,0" VerticalAlignment="Center"/></Grid>
         <TextBlock Grid.Row="1" Text="Copy a CPU microcode from a BIOS file or vendor ZIP." Style="{StaticResource Muted}" FontSize="12" Margin="0,7,0,0"/>
         <StackPanel Grid.Row="2" VerticalAlignment="Center" Margin="0,10"><TextBlock x:Name="OldName" Text="No old BIOS selected" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" FontWeight="SemiBold"/><TextBlock x:Name="OldDetail" Text="Intel CAP / BIN / ROM / vendor file / ZIP" Style="{StaticResource Muted}" FontSize="12" Margin="0,3,0,0"/></StackPanel>
         <StackPanel Grid.Row="3"><TextBlock Text="Microcode to copy" Style="{StaticResource Label}"/><ComboBox x:Name="OldCodes" DisplayMemberPath="Display" SelectionChanged="OldCode_Changed" AutomationProperties.Name="Old BIOS microcode" FontFamily="Consolas" FontSize="12"/></StackPanel>
@@ -25,10 +25,10 @@
       <Border x:Name="NewDrop" Grid.Column="2" Style="{StaticResource Card}" AllowDrop="True" DragOver="File_DragOver" Drop="New_Drop">
        <Grid>
         <Grid.RowDefinitions><RowDefinition Height="Auto"/><RowDefinition Height="Auto"/><RowDefinition Height="*"/><RowDefinition Height="Auto"/></Grid.RowDefinitions>
-        <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><StackPanel><TextBlock Text="NEW BIOS / TARGET" Foreground="{DynamicResource Accent}" FontWeight="SemiBold" FontSize="11"/><TextBlock Text="Drop the new BIOS here" Style="{StaticResource Heading}" Margin="0,3,0,0"/></StackPanel><Button x:Name="NewButton" Grid.Column="1" Content="Browse…" Click="New_Click" Margin="8,0,0,0" VerticalAlignment="Center"/></Grid>
+        <Grid><Grid.ColumnDefinitions><ColumnDefinition/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions><StackPanel><TextBlock Text="02  TARGET BIOS" Foreground="{DynamicResource Accent}" FontWeight="SemiBold" FontSize="11"/><TextBlock Text="Drop target BIOS" Style="{StaticResource Heading}" Margin="0,3,0,0"/></StackPanel><Button x:Name="NewButton" Grid.Column="1" Content="Browse…" Click="New_Click" Margin="8,0,0,0" VerticalAlignment="Center"/></Grid>
         <TextBlock Grid.Row="1" Text="Use your target board's BIOS. The original is preserved." Style="{StaticResource Muted}" FontSize="12" Margin="0,7,0,0"/>
         <StackPanel Grid.Row="2" VerticalAlignment="Center" Margin="0,10"><TextBlock x:Name="NewName" Text="No new BIOS selected" TextTrimming="CharacterEllipsis" TextWrapping="NoWrap" FontWeight="SemiBold"/><TextBlock x:Name="NewDetail" Text="Use the exact motherboard model and revision" Style="{StaticResource Muted}" FontSize="12" Margin="0,3,0,0"/></StackPanel>
-        <StackPanel Grid.Row="3"><TextBlock Text="Matching microcode to replace" Style="{StaticResource Label}"/><ComboBox x:Name="NewCodes" DisplayMemberPath="Display" SelectionChanged="NewCode_Changed" AutomationProperties.Name="New BIOS target microcode" FontFamily="Consolas" FontSize="12"/></StackPanel>
+        <StackPanel Grid.Row="3"><TextBlock Text="Microcode to replace" Style="{StaticResource Label}"/><ComboBox x:Name="NewCodes" DisplayMemberPath="Display" SelectionChanged="NewCode_Changed" AutomationProperties.Name="New BIOS target microcode" FontFamily="Consolas" FontSize="12"/></StackPanel>
        </Grid>
       </Border>
      </Grid>
@@ -47,7 +47,7 @@
       <StackPanel>
        <TextBlock x:Name="PlanText" Text="Choose the old and new BIOS to start." FontSize="15" FontWeight="SemiBold"/>
        <TextBlock x:Name="CoverageText" Foreground="{DynamicResource Warning}" FontSize="12" Margin="0,5,0,0" Visibility="Collapsed"/>
-       <Grid Margin="0,10,0,0"><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/><ColumnDefinition/></Grid.ColumnDefinitions><Button x:Name="BuildButton" Content="Build &amp; verify…" Style="{StaticResource PrimaryButton}" IsEnabled="False" Click="Build_Click"/><Button x:Name="KnownButton" Grid.Column="1" Content="ASUS 3202 / 11F example" Click="Known_Click"/><TextBlock Grid.Column="2" Text="Native checks + UEFIExtract + MCExtractor" Style="{StaticResource Muted}" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="12"/></Grid>
+       <Grid Margin="0,10,0,0"><Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition/></Grid.ColumnDefinitions><Button x:Name="BuildButton" Content="Build &amp; verify…" Style="{StaticResource PrimaryButton}" IsEnabled="False" Click="Build_Click"/><TextBlock Grid.Column="1" Text="Native checks + UEFIExtract + MCExtractor" Style="{StaticResource Muted}" VerticalAlignment="Center" HorizontalAlignment="Right" FontSize="12"/></Grid>
        <TextBlock Text="Older microcode can omit fixes. File checks do not prove bootability. Supported: Intel FIT with uncompressed slots; equal-size or smaller donor." Style="{StaticResource Muted}" FontSize="11" Margin="0,8,0,0"/>
       </StackPanel>
      </Border>
@@ -101,7 +101,7 @@
        <TextBlock Grid.Row="4" Text="Uncompressed Intel microcodes. Checksums do not establish CPU compatibility or Intel signature authenticity." Style="{StaticResource Muted}" FontSize="11"/>
       </Grid>
      </Border>
-     <TextBlock Grid.Row="2" Text="Roch Microcode 1.0.0 • MateoPcTech. UEFIExtract by LongSoft; MCExtractor by Plato Mavropoulos. Licenses included." Style="{StaticResource Muted}" FontSize="11" Margin="0,8,0,0"/>
+     <TextBlock Grid.Row="2" Text="Roch Microcode 1.0.1 • MateoPcTech. UEFIExtract by LongSoft; MCExtractor by Plato Mavropoulos. Licenses included." Style="{StaticResource Muted}" FontSize="11" Margin="0,8,0,0"/>
     </Grid>
    </TabItem>
   </TabControl>

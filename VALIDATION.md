@@ -1,4 +1,10 @@
-# Roch Microcode 1.0.0 verification
+# Roch Microcode verification
+
+## 1.0.1 UI refresh
+
+The darker theme and simplified interface passed a real MPOWER PA / 11F transfer with both independent verifiers, M-FLASH/button selection checks and package reload. All four tabs fit at 1180 × 800 and 1000 × 720 in both themes; screenshots were reviewed. No USB or motherboard writes occurred. Evidence: `test-results/ui-v1.0.1/`. The Windows 11 title bar uses the active theme's background and text colours; older Windows versions retain their native frame where these attributes are unsupported.
+
+## Earlier verification
 
 The M-FLASH update passed 20 filename/method checks, including loading an existing MSI button package, JSON compatibility, incorrect target/version rejection and unchanged naming for other vendors. A real MPOWER PA / PRO Z790-A 11F transfer passed both independent verifiers, package reload and layout checks across four tabs, two themes and two window sizes. The UI test also verifies switching between M-FLASH and the button filename. No USB writes or hardware flashing were performed. Screenshots and evidence: `test-results/ui-mflash/`.
 

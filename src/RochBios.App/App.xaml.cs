@@ -18,6 +18,7 @@ public partial class App : Application
     {
         Resources.MergedDictionaries[0] = new ResourceDictionary { Source = new Uri($"Themes/{(light ? "Light" : "Dark")}.xaml", UriKind.Relative) };
         IsLightTheme = light;
+        foreach (Window window in Windows) WindowTheme.Apply(window, light);
         if (!persist) return true;
         try { Directory.CreateDirectory(Path.GetDirectoryName(ThemePath)!); File.WriteAllText(ThemePath, light ? "Light" : "Dark"); return true; }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException) { return false; }

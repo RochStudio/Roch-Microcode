@@ -1,4 +1,4 @@
-# Roch Microcode 1.0.0
+# Roch Microcode 1.0.1
 
 **Drop an old BIOS, drop a new BIOS, select a microcode, build and verify, then prepare USB.**
 
@@ -76,7 +76,7 @@ The cross-vendor suite uses real BIOS pairs listed in `VALIDATION.md`; it does n
 
 `tools/Bundle-Verifiers.ps1` rebuilds the embedded tool bundle from upstream UEFIExtract A75, MCExtractor r352, CPython 3.11.9, colorama 0.4.6 and PLTable 1.1.0. It uses pip only when rebuilding that development bundle. Runtime tool extraction and integrity checks are automatic. Licenses are under `THIRD-PARTY/` and embedded with the tools.
 
-No telemetry. The optional ASUS example downloads pinned original files from ASUS; all general transfer work is offline. Verifier updates are disabled during execution. Tool cache and diagnostic work live in the local data folder described above.
+No telemetry. Load your own BIOS files or vendor ZIPs; transfer work is offline. Verifier updates are disabled during execution. Tool cache and diagnostic work live in the local data folder described above.
 
 Firmware fixtures, generated BIOS images, local reports and USB backups are not included in this repository or the app download. Integration tests require separately obtained firmware files. The GitHub workflow verifies the Windows build; it does not flash hardware or claim the integration tests have run.
 
