@@ -1,0 +1,25 @@
+[workspace]
+resolver = "2"
+members = ["crates/roch-core", "crates/roch-app", "crates/roch-fixture-tests"]
+default-members = ["crates/roch-core", "crates/roch-app", "crates/roch-fixture-tests"]
+
+[workspace.package]
+version = "1.0.1"
+edition = "2021"
+license = "GPL-3.0-or-later"
+authors = ["Roch Studio"]
+repository = "https://github.com/RochStudio/Roch-Microcode"
+rust-version = "1.88"
+
+[profile.release]
+opt-level = 3
+lto = "thin"
+codegen-units = 1
+strip = "symbols"
+
+# Firmware scanning runs over 32 MB images; keep debug test builds usable.
+[profile.dev]
+opt-level = 1
+
+[profile.dev.package."*"]
+opt-level = 2
