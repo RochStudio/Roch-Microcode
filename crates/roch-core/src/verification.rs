@@ -92,7 +92,8 @@ fn decode(bytes: &[u8]) -> String {
 fn kill_tree(child: &mut std::process::Child) {
     use std::os::windows::process::CommandExt;
     // Process.Kill(entireProcessTree: true).
-    let _ = Command::new("taskkill")
+    let system_root = std::env::var_os("SystemRoot").map(PathBuf::from).unwrap_or_else(|| PathBuf::from(r"C:\Windows"));
+    let _ = Command::new(system_root.join("System32").join("taskkill.exe"))
         .args(["/PID", &child.id().to_string(), "/T", "/F"])
         .stdin(Stdio::null())
         .stdout(Stdio::null())
