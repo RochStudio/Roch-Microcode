@@ -14,15 +14,20 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-dotnet@v4
+      - uses: dtolnay/rust-toolchain@stable
         with:
-          dotnet-version: '10.0.x'
+          components: clippy, rustfmt
       - name: Build portable Windows app
         shell: pwsh
         run: ./build.ps1
+      - name: Format
+        run: cargo fmt --all --check
+      - name: Lint
+        run: cargo clippy --workspace --all-targets --locked -- -D warnings
+      - name: Unit, synthetic-firmware and bundled-verifier tests
+        run: cargo test --workspace --locked -- --include-ignored
       - name: Check flash method and filename rules
-        shell: pwsh
-        run: dotnet run --project tests/RochBios.ProfileTests -c Release
+        run: cargo run --locked -p roch-fixture-tests --bin roch-profile-tests
       - name: Upload build artifact
         uses: actions/upload-artifact@v4
         with:

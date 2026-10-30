@@ -1,5 +1,12 @@
 # Changelog
 
+## Unreleased — Rust rewrite (`rust-rewrite` branch)
+
+- Rewritten in Rust: `roch-core` (engine, package format, bundled verifiers, USB policy) and `roch-app` (egui interface). `RochMicrocode.exe` is now a native single executable; no .NET runtime is required.
+- Same firmware rules, rejection messages, version 2 package layout and JSON format, M-FLASH / FlashBack naming, USB safety checks, data folder (including the legacy `Roch BIOS` fallback), saved theme and footer links. The bundled UEFIExtract / MCExtractor tools and their invocation are unchanged.
+- Build, tests and workflows use Cargo. Synthetic-firmware tests now run without real BIOS files; the real-firmware suites keep their arguments.
+- The real-firmware suites listed in `VALIDATION.md` have not yet been re-run against the Rust implementation.
+
 ## 1.0.1
 
 - Darker neutral background, inset inputs and subtler card borders.

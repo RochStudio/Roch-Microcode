@@ -13,3 +13,5 @@ Roch Microcode distributes these tools without source modifications. Their licen
 | PLTable | 1.1.0 | https://pypi.org/project/PLTable/1.1.0/ |
 
 The Python runtime is private to the app and does not install or alter the user's Python environment. UEFIExtract reads firmware trees; MCExtractor reads and extracts microcode in private working directories. Neither is used to flash the motherboard. Automatic verifier update checks are disabled.
+
+The Rust source build statically links open-source crates (for example egui/eframe, winit, serde, sha2, zip, regex and windows-sys) under permissive licenses such as MIT, Apache-2.0, Zlib and BSD. The exact set and versions are recorded in `Cargo.lock`; their license texts are available from each crate's source.

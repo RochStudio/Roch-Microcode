@@ -11,16 +11,14 @@ jobs:
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-dotnet@v4
-        with:
-          dotnet-version: '10.0.x'
+      - uses: dtolnay/rust-toolchain@stable
       - name: Build and package current version
         shell: pwsh
         run: |
           ./build.ps1
-          [xml]$project = Get-Content src/RochBios.App/RochBios.App.csproj
-          $version = [string]$project.Project.PropertyGroup.Version
-          if ($version -notmatch '^\d+\.\d+\.\d+$') { throw 'Invalid release version' }
+          $match = Select-String -LiteralPath Cargo.toml -Pattern '^version = "(\d+\.\d+\.\d+)"' | Select-Object -First 1
+          if ($null -eq $match) { throw 'Invalid release version' }
+          $version = $match.Matches[0].Groups[1].Value
           New-Item -ItemType Directory -Path release-output | Out-Null
           $windowsName = "RochMicrocode-$version-win-x64.zip"
           $sourceName = "RochMicrocode-$version-source.zip"

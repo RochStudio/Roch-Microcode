@@ -6,7 +6,7 @@
 
 Previously named **Roch BIOS**. The executable is now **RochMicrocode.exe**. Existing version 2 BIOS packages remain compatible.
 
-Roch Microcode is a Windows x64 app for Intel microcode transfer across supported **ASUS, MSI, ASRock and Gigabyte** firmware layouts. The general engine has no fixed motherboard, BIOS-version, revision or offset allowlist. It validates each input's actual structure. Downloads labelled `runtime-required` need the **.NET 10 Desktop Runtime (x64)**; self-contained builds include it. Python and the verification tools are bundled.
+Roch Microcode is a Windows x64 app for Intel microcode transfer across supported **ASUS, MSI, ASRock and Gigabyte** firmware layouts. The general engine has no fixed motherboard, BIOS-version, revision or offset allowlist. It validates each input's actual structure. The app is a single portable executable with no runtime to install; Python and the verification tools are bundled.
 
 ## Use
 
@@ -60,25 +60,42 @@ Packages contain `modified/<filename>`, `recovery/<filename>`, `donor-microcode.
 
 ## Build and test
 
-Requires .NET SDK 10 on Windows for source builds:
+Roch Microcode is written in Rust (a Cargo workspace; the GUI uses egui/eframe). Source builds need the stable Rust toolchain for `x86_64-pc-windows-msvc` and the MSVC build tools / Windows SDK on Windows x64:
 
 ```powershell
-.\build.ps1
-dotnet run --project tests/RochBios.Tests -c Release -- "official-3202.CAP" "official-1904.CAP" --online
-dotnet run --project tests/RochBios.TransferTests -c Release -- "ASUS-fixture-folder" "cross-vendor-fixture-folder"
+.\build.ps1                       # cargo build --release, then dist\RochMicrocode.exe + licenses and notices
+cargo test --workspace            # unit tests and synthetic-firmware engine/package tests
+cargo test --workspace -- --include-ignored   # also exports a synthetic package through the bundled UEFIExtract and MCExtractor
+cargo clippy --workspace --all-targets
 ```
 
-The cross-vendor suite uses real BIOS pairs listed in `VALIDATION.md`; it does not flash hardware. The app also includes an internal smoke test that loads both images, exports an independently verified package into the test folder and renders all four tabs in both themes at normal (1180 × 800) and compact (1000 × 720) sizes, checking that the key controls remain in bounds:
+| Path | Contents |
+| --- | --- |
+| `crates/roch-core` | Engine: microcode scanner and checksums, FV/FFS/FIT validation, transfer builder, package format, bundled verifiers, USB policy and preparation |
+| `crates/roch-app` | `RochMicrocode.exe`: the four-page egui interface, Windows inventory, theme and smoke test |
+| `crates/roch-fixture-tests` | Real-firmware regression suites and a synthetic image generator |
+
+The real-firmware suites take the same arguments as before and require separately obtained BIOS files:
+
+```powershell
+cargo run --release -p roch-fixture-tests --bin roch-tests -- "official-3202.CAP" "official-1904.CAP" --online
+cargo run --release -p roch-fixture-tests --bin roch-transfer-tests -- "ASUS-fixture-folder" "cross-vendor-fixture-folder"
+cargo run --release -p roch-fixture-tests --bin roch-profile-tests -- ["existing-MSI-button-package-folder"]
+```
+
+The cross-vendor suite uses real BIOS pairs listed in `VALIDATION.md`; it does not flash hardware. Without real firmware, `cargo test` builds small synthetic images with the same FIT, firmware volume, raw FFS and microcode structures; they are not bootable firmware and must never be flashed. The app also includes an internal smoke test that loads both images, exports an independently verified package into the test folder and renders all four tabs in both themes at normal (1180 × 800) and compact (1000 × 720) window sizes, checking that the key controls remain in bounds and saving a screenshot of each:
 
 ```powershell
 .\dist\RochMicrocode.exe --smoke-test "new-BIOS-file" "old-BIOS-file" "screenshot-output-folder"
+# Without real firmware: write synthetic MSI-named images first
+cargo run -p roch-fixture-tests --bin roch-make-synthetic -- "synthetic-folder"
 ```
 
-`tools/Bundle-Verifiers.ps1` rebuilds the embedded tool bundle from upstream UEFIExtract A75, MCExtractor r352, CPython 3.11.9, colorama 0.4.6 and PLTable 1.1.0. It uses pip only when rebuilding that development bundle. Runtime tool extraction and integrity checks are automatic. Licenses are under `THIRD-PARTY/` and embedded with the tools.
+`tools/Generate-Icon.ps1` regenerates `assets/RochMicrocode.ico` (embedded in the executable). `tools/Bundle-Verifiers.ps1` rebuilds the embedded tool bundle from upstream UEFIExtract A75, MCExtractor r352, CPython 3.11.9, colorama 0.4.6 and PLTable 1.1.0. It uses pip only when rebuilding that development bundle. Runtime tool extraction and integrity checks are automatic. Licenses are under `THIRD-PARTY/` and embedded with the tools.
 
 No telemetry. Load your own BIOS files or vendor ZIPs; transfer work is offline. Verifier updates are disabled during execution. Tool cache and diagnostic work live in the local data folder described above.
 
-Firmware fixtures, generated BIOS images, local reports and USB backups are not included in this repository or the app download. Integration tests require separately obtained firmware files. The GitHub workflow verifies the Windows build; it does not flash hardware or claim the integration tests have run.
+Firmware fixtures, generated BIOS images, local reports and USB backups are not included in this repository or the app download. Integration tests require separately obtained firmware files. The GitHub workflow builds the Windows app and runs the lint, unit and synthetic-firmware tests (including one synthetic export through the bundled verifiers); it does not flash hardware or claim the real-firmware integration tests have run.
 
 ## Licensing
 

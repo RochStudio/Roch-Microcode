@@ -1,5 +1,11 @@
 # Roch Microcode verification
 
+## Rust rewrite (unreleased)
+
+The Rust port keeps the engine rules, package format and verifier invocation of 1.0.1. On Windows 11 x64 it passed `cargo test` (unit tests, synthetic-firmware transfer and package tests, and one synthetic package exported through the bundled UEFIExtract A75 and MCExtractor 1.104.0/r352 and reopened) and the UI smoke test on synthetic MSI-named images: M-FLASH/button filename switching, independent verification, package export and reload, and all four tabs in both themes at both sizes with control-boundary checks and screenshots. No USB writes or flashing occurred.
+
+**The real-firmware suites and the results below were produced by the .NET implementation and have not yet been re-run against the Rust build.** Run `roch-tests`, `roch-transfer-tests` and `roch-profile-tests` with the fixtures listed below (see README) before releasing it.
+
 ## 1.0.1 UI refresh
 
 The darker theme and simplified interface passed a real MPOWER PA / 11F transfer with both independent verifiers, M-FLASH/button selection checks and package reload. All four tabs fit at 1180 × 800 and 1000 × 720 in both themes; screenshots were reviewed. No USB or motherboard writes occurred. Evidence: `test-results/ui-v1.0.1/`. The Windows 11 title bar uses the active theme's background and text colours; older Windows versions retain their native frame where these attributes are unsupported.
